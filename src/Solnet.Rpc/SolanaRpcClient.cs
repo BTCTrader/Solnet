@@ -160,8 +160,9 @@ namespace Solnet.Rpc
             {
                 throw new ArgumentException("Commitment.Processed is not supported for this method.");
             }
-
-            return await SendRequestAsync<BlockInfo>("getBlock",
+            
+            // TODO: Updata as getBlock
+            return await SendRequestAsync<BlockInfo>("getConfirmedBlock",
                 Parameters.Create(slot, ConfigObject.Create(KeyValue.Create("encoding", "json"), HandleCommitment(commitment))));
         }
 
@@ -179,7 +180,8 @@ namespace Solnet.Rpc
                 throw new ArgumentException("Commitment.Processed is not supported for this method.");
             }
 
-            return await SendRequestAsync<List<ulong>>("getBlocks",
+            // TODO: Update as getBlocks when applied to mainnet
+            return await SendRequestAsync<List<ulong>>("getConfirmedBlocks",
                 Parameters.Create(startSlot, endSlot > 0 ? endSlot : null, ConfigObject.Create(HandleCommitment(commitment))));
         }
 
@@ -201,7 +203,8 @@ namespace Solnet.Rpc
                 throw new ArgumentException("Commitment.Processed is not supported for this method.");
             }
 
-            return await SendRequestAsync<List<ulong>>("getBlocksWithLimit",
+            // TODO: Update as getBlocksWithLimit
+            return await SendRequestAsync<List<ulong>>("getConfirmedBlocksWithLimit",
                  Parameters.Create(startSlot, limit, ConfigObject.Create(HandleCommitment(commitment))));
         }
 
@@ -291,7 +294,8 @@ namespace Solnet.Rpc
         public async Task<RequestResult<TransactionMetaSlotInfo>> GetTransactionAsync(string signature,
             Commitment commitment = Commitment.Finalized)
         {
-            return await SendRequestAsync<TransactionMetaSlotInfo>("getTransaction",
+            // TODO: Update as getTransaction
+            return await SendRequestAsync<TransactionMetaSlotInfo>("getConfirmedTransaction",
                 Parameters.Create(signature, ConfigObject.Create(KeyValue.Create("encoding","json"), HandleCommitment(commitment))));
         }
 
