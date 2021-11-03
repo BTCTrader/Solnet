@@ -68,9 +68,11 @@ namespace Solnet.Rpc.Core.Http
             {
                 _logger?.LogInformation(new EventId(req.Id, req.Method), $"Sending request: {requestJson}");
 
-                using (var response = await _httpClient.SendAsync(new HttpRequestMessage(HttpMethod.Post, "")
+                using (var response = await _httpClient.SendAsync(new HttpRequestMessage
                 {
-                    Content = new StringContent(requestJson, Encoding.UTF8, "application/json")
+                    Content = new StringContent(requestJson, Encoding.UTF8, "application/json"),
+                    Method = HttpMethod.Post,
+                    RequestUri = new Uri(NodeAddress.AbsoluteUri, UriKind.Absolute)
                 }).ConfigureAwait(false))
                 {
                     return await HandleResult<T>(req, response).ConfigureAwait(false);
