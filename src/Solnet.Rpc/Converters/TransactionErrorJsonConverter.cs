@@ -1,8 +1,9 @@
+using Solnet.Rpc.Models;
 using System;
 using System.Text.Json;
 using System.Text.Json.Serialization;
 
-namespace Solnet.Rpc.Models
+namespace Solnet.Rpc.Converters
 {
     /// <summary>
     /// Converts a TransactionError from json into its model representation.
@@ -104,7 +105,7 @@ namespace Solnet.Rpc.Models
 
             if (reader.TokenType == JsonTokenType.Number)
             {
-                err.InstructionError.CustomError = reader.GetInt64();
+                err.InstructionError.CustomError = reader.GetInt32();
                 reader.Read(); //number
                 reader.Read(); //endobj
                 reader.Read(); //endarray
