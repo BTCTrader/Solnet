@@ -1,13 +1,13 @@
-﻿using System;
-using Solnet.Wallet;
+﻿using Solnet.Programs;
 using Solnet.Rpc;
-using Solnet.Wallet.Bip39;
-using Solnet.Programs;
 using Solnet.Rpc.Builders;
+using Solnet.Wallet;
+using Solnet.Wallet.Bip39;
+using System;
 
 namespace Solnet.Examples
 {
-    class HelloWorldExample : IExample
+    public class HelloWorldExample : IExample
     {
         public void Run()
         {
@@ -40,11 +40,12 @@ namespace Solnet.Examples
 
                     Console.WriteLine($"Balance: {balance.Result.Value}");
 
-                    var memoInstruction = MemoProgram.NewMemo(wallet.Account, "Hello Solana World, using Solnet :)");
+                    var memoInstruction = MemoProgram.NewMemoV2("Hello Solana World, using Solnet :)");
 
                     var recentHash = rpcClient.GetRecentBlockHash();
 
-                    var tx = new TransactionBuilder().AddInstruction(memoInstruction).SetFeePayer(wallet.Account).SetRecentBlockHash(recentHash.Result.Value.Blockhash).Build();
+                    var tx = new TransactionBuilder().AddInstruction(memoInstruction).SetFeePayer(wallet.Account)
+                        .SetRecentBlockHash(recentHash.Result.Value.Blockhash).Build(wallet.Account);
 
                     var txHash = rpcClient.SendTransaction(tx);
 

@@ -8,7 +8,7 @@ namespace Solnet.Wallet
     /// <summary>
     /// Implements account functionality.
     /// </summary>
-    [DebuggerDisplay("PubKey = {" + nameof(Account.PublicKey.Key) + "}")]
+    [DebuggerDisplay("PubKey = {ToString()}")]
     public class Account
     {
         /// <summary>
@@ -33,7 +33,7 @@ namespace Solnet.Wallet
             PrivateKey = new PrivateKey(privateKey);
             PublicKey = new PublicKey(publicKey);
         }
-        
+
         /// <summary>
         /// Initialize an account with the passed private and public keys.
         /// </summary>
@@ -58,22 +58,14 @@ namespace Solnet.Wallet
         /// <param name="message">The signed message.</param>
         /// <param name="signature">The signature of the message.</param>
         /// <returns></returns>
-        public bool Verify(byte[] message, byte[] signature)
-        {
-            return Ed25519.Verify(signature, message, PublicKey.KeyBytes);
-        }
+        public bool Verify(byte[] message, byte[] signature) => PublicKey.Verify(message, signature);
 
         /// <summary>
         /// Sign the data.
         /// </summary>
         /// <param name="message">The data to sign.</param>
         /// <returns>The signature of the data.</returns>
-        public byte[] Sign(byte[] message)
-        {
-            byte[] signature = new byte[64];
-            Ed25519.Sign(signature, message, PrivateKey.KeyBytes);
-            return signature;
-        }
+        public byte[] Sign(byte[] message) => PrivateKey.Sign(message);
 
         /// <summary>
         /// Generates a random seed for the Ed25519 key pair.
@@ -85,7 +77,15 @@ namespace Solnet.Wallet
             RandomUtils.GetBytes(bytes);
             return bytes;
         }
-        
+
+        /// <inheritdoc cref="Equals(object)"/>
+        public override bool Equals(object obj)
+        {
+            if (obj is Account account) return account.PublicKey == this.PublicKey;
+
+            return false;
+        }
+
         /// <summary>
         /// Conversion between a <see cref="Account"/> object and the corresponding private key.
         /// </summary>
@@ -99,5 +99,11 @@ namespace Solnet.Wallet
         /// <param name="account">The Account object.</param>
         /// <returns>The public key as a byte array.</returns>
         public static implicit operator PublicKey(Account account) => account.PublicKey;
+
+        /// <inheritdoc cref="ToString"/>
+        public override string ToString() => PublicKey;
+
+        /// <inheritdoc cref="GetHashCode"/>
+        public override int GetHashCode() => PublicKey.GetHashCode();
     }
 }

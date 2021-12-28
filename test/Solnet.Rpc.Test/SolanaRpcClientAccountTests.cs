@@ -1,4 +1,5 @@
 ﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
+using Solnet.Rpc.Models;
 using Solnet.Rpc.Types;
 using System;
 using System.Collections.Generic;
@@ -41,6 +42,122 @@ namespace Solnet.Rpc.Test
             Assert.AreEqual(5478840UL, result.Result.Value.Lamports);
             Assert.AreEqual("11111111111111111111111111111111", result.Result.Value.Owner);
             Assert.AreEqual(195UL, result.Result.Value.RentEpoch);
+
+            FinishTest(messageHandlerMock, TestnetUri);
+        }
+
+        [TestMethod]
+        public void TestGetTokenAccountInfo()
+        {
+            var responseData = File.ReadAllText("Resources/Http/Accounts/GetTokenAccountInfoResponse.json");
+            var requestData = File.ReadAllText("Resources/Http/Accounts/GetTokenAccountInfoRequest.json");
+
+            var sentMessage = string.Empty;
+            var messageHandlerMock = SetupTest(
+                (s => sentMessage = s), responseData);
+
+            var httpClient = new HttpClient(messageHandlerMock.Object)
+            {
+                BaseAddress = TestnetUri,
+            };
+
+            var sut = new SolanaRpcClient(TestnetUrl, null, httpClient);
+
+            var result = sut.GetTokenAccountInfo("FMFMUFqRsGnKm2tQzsaeytATzSG6Evna4HEbKuS6h9uk");
+            Assert.AreEqual(requestData, sentMessage);
+            Assert.IsNotNull(result.Result);
+            Assert.IsTrue(result.WasSuccessful);
+            Assert.AreEqual(103677806UL, result.Result.Context.Slot);
+            Assert.AreEqual(false, result.Result.Value.Executable);
+            Assert.AreEqual(2039280UL, result.Result.Value.Lamports);
+            Assert.AreEqual("TokenkegQfeZyiNwAJbNbGKPFXCWuBvf9Ss623VQ5DA", result.Result.Value.Owner);
+            Assert.AreEqual(239UL, result.Result.Value.RentEpoch);
+
+            Assert.AreEqual("spl-token", result.Result.Value.Data.Program);
+            Assert.AreEqual(165UL, result.Result.Value.Data.Space);
+
+            Assert.AreEqual("account", result.Result.Value.Data.Parsed.Type);
+
+            Assert.AreEqual("2v6JjYRt93Z1h8iTZavSdGdDufocHCFKT8gvHpg3GNko", result.Result.Value.Data.Parsed.Info.Mint);
+            Assert.AreEqual("47vp5BqxBQoMJkitajbsZRhyAR5phW28nKPvXhFDKTFH", result.Result.Value.Data.Parsed.Info.Owner);
+            Assert.AreEqual(false, result.Result.Value.Data.Parsed.Info.IsNative);
+            Assert.AreEqual("initialized", result.Result.Value.Data.Parsed.Info.State);
+
+            Assert.AreEqual("1", result.Result.Value.Data.Parsed.Info.TokenAmount.Amount);
+            Assert.AreEqual(0, result.Result.Value.Data.Parsed.Info.TokenAmount.Decimals);
+
+            FinishTest(messageHandlerMock, TestnetUri);
+        }
+
+        [TestMethod]
+        public void TestGetTokenMintInfo()
+        {
+            var responseData = File.ReadAllText("Resources/Http/Accounts/GetTokenMintInfoResponse.json");
+            var requestData = File.ReadAllText("Resources/Http/Accounts/GetTokenMintInfoRequest.json");
+
+            var sentMessage = string.Empty;
+            var messageHandlerMock = SetupTest(
+                (s => sentMessage = s), responseData);
+
+            var httpClient = new HttpClient(messageHandlerMock.Object)
+            {
+                BaseAddress = TestnetUri,
+            };
+
+            var sut = new SolanaRpcClient(TestnetUrl, null, httpClient);
+
+            var result = sut.GetTokenMintInfo("2v6JjYRt93Z1h8iTZavSdGdDufocHCFKT8gvHpg3GNko", Commitment.Confirmed);
+            Assert.AreEqual(requestData, sentMessage);
+            Assert.IsNotNull(result.Result);
+            Assert.IsTrue(result.WasSuccessful);
+            Assert.AreEqual(103677835UL, result.Result.Context.Slot);
+            Assert.AreEqual(false, result.Result.Value.Executable);
+            Assert.AreEqual(1461600UL, result.Result.Value.Lamports);
+            Assert.AreEqual("TokenkegQfeZyiNwAJbNbGKPFXCWuBvf9Ss623VQ5DA", result.Result.Value.Owner);
+            Assert.AreEqual(239UL, result.Result.Value.RentEpoch);
+
+            Assert.AreEqual("spl-token", result.Result.Value.Data.Program);
+            Assert.AreEqual(82UL, result.Result.Value.Data.Space);
+
+            Assert.AreEqual("mint", result.Result.Value.Data.Parsed.Type);
+
+            Assert.AreEqual("Ad35ryfDYGvwGETsvkbgFoGasxdGAEtLPv8CYG3eNaMu", result.Result.Value.Data.Parsed.Info.FreezeAuthority);
+            Assert.AreEqual("Ad35ryfDYGvwGETsvkbgFoGasxdGAEtLPv8CYG3eNaMu", result.Result.Value.Data.Parsed.Info.MintAuthority);
+            Assert.AreEqual("1", result.Result.Value.Data.Parsed.Info.Supply);
+            Assert.AreEqual(0, result.Result.Value.Data.Parsed.Info.Decimals);
+
+            FinishTest(messageHandlerMock, TestnetUri);
+        }
+
+        [TestMethod]
+        public void TestGetAccountInfoParsed()
+        {
+            var responseData = File.ReadAllText("Resources/Http/Accounts/GetAccountInfoParsedResponse.json");
+            var parsedJsonDataOnly = File.ReadAllText("Resources/Http/Accounts/GetAccountInfoParsedResponseDataOnly.json");
+            var requestData = File.ReadAllText("Resources/Http/Accounts/GetAccountInfoParsedRequest.json");
+
+            var sentMessage = string.Empty;
+            var messageHandlerMock = SetupTest(
+                (s => sentMessage = s), responseData);
+
+            var httpClient = new HttpClient(messageHandlerMock.Object)
+            {
+                BaseAddress = TestnetUri,
+            };
+
+            var sut = new SolanaRpcClient(TestnetUrl, null, httpClient);
+
+            var result = sut.GetAccountInfo("2v6JjYRt93Z1h8iTZavSdGdDufocHCFKT8gvHpg3GNko", Commitment.Confirmed, BinaryEncoding.JsonParsed);
+            Assert.AreEqual(requestData, sentMessage);
+            Assert.IsNotNull(result.Result);
+            Assert.IsTrue(result.WasSuccessful);
+            Assert.AreEqual(103659529UL, result.Result.Context.Slot);
+            Assert.AreEqual(parsedJsonDataOnly, result.Result.Value.Data[0]);
+            Assert.AreEqual("jsonParsed", result.Result.Value.Data[1]);
+            Assert.AreEqual(false, result.Result.Value.Executable);
+            Assert.AreEqual(1461600UL, result.Result.Value.Lamports);
+            Assert.AreEqual("TokenkegQfeZyiNwAJbNbGKPFXCWuBvf9Ss623VQ5DA", result.Result.Value.Owner);
+            Assert.AreEqual(239UL, result.Result.Value.RentEpoch);
 
             FinishTest(messageHandlerMock, TestnetUri);
         }
@@ -116,7 +233,7 @@ namespace Solnet.Rpc.Test
 
             FinishTest(messageHandlerMock, TestnetUri);
         }
-        
+
         [TestMethod]
         public void TestGetProgramAccountsDataSize()
         {
@@ -135,6 +252,46 @@ namespace Solnet.Rpc.Test
             var sut = new SolanaRpcClient(TestnetUrl, null, httpClient);
 
             var result = sut.GetProgramAccounts("4Nd1mBQtrMJVYVfKf2PJy9NZUZdTAsp7D4xWLs4gDB4T", dataSize: 500);
+            Assert.AreEqual(requestData, sentMessage);
+            Assert.IsNotNull(result.Result);
+            Assert.IsTrue(result.WasSuccessful);
+            Assert.AreEqual(2, result.Result.Count);
+            Assert.AreEqual("FzNKvS4SCHDoNbnnfhmGSLVRCLNBUuGecxdvobSGmWMh", result.Result[0].PublicKey);
+
+            Assert.AreEqual("NhOiFR2mEcZJFj1ciaG2IrWOf2poe4LNGYC5gvdULBYyFH1Kq4cdNyYf+7u2r6NaWXHwnqiXnCzkFhIDU"
+                + "jSbNN2i/bmtSgasAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAADkpoamWb2mUaHqREQNm8VPcqSWUGCgPjWK"
+                + "jh0raCI+OEo8UAXpyc1w/8KV64XXwhGP70z6aN3K1vnzjpYXQqr3vvsgJ4UD4OatRY1IsR9NYTReSKpRIhPpTupzQ9W"
+                + "zTpfWSTLZP2xvdcWyo8spQGJ2uGX0jH9h4ZxJ+orI/IsnqxyAHH+MXZuMBl28YfgFJRh8PZHPKbmFvVPDFs3xgBVWzz"
+                + "QuNTAlY5aWAEN5CRqkYmOXDcge++gRlEry6ItrMEA0VZV0zsOFk2oDiT9W7slB3JefUOpWS4DMPJW6N0zRUDTtXaGmW"
+                + "rqt6W4vEGC0DnBI++A2ZkHoMmJ+qeCKBVkNJgAAADc4o2AAAAAA/w==", result.Result[0].Account.Data[0]);
+            Assert.AreEqual("base64", result.Result[0].Account.Data[1]);
+            Assert.AreEqual(false, result.Result[0].Account.Executable);
+            Assert.AreEqual(3486960UL, result.Result[0].Account.Lamports);
+            Assert.AreEqual("GrAkKfEpTKQuVHG2Y97Y2FF4i7y7Q5AHLK94JBy7Y5yv", result.Result[0].Account.Owner);
+            Assert.AreEqual(188UL, result.Result[0].Account.RentEpoch);
+
+            FinishTest(messageHandlerMock, TestnetUri);
+        }
+
+        [TestMethod]
+        public void TestGetProgramAccountsMemoryCompare()
+        {
+            var responseData = File.ReadAllText("Resources/Http/Accounts/GetProgramAccountsResponse.json");
+            var requestData = File.ReadAllText("Resources/Http/Accounts/GetProgramAccountsMemoryCompareRequest.json");
+
+            var sentMessage = string.Empty;
+            var messageHandlerMock = SetupTest(
+                (s => sentMessage = s), responseData);
+
+            var httpClient = new HttpClient(messageHandlerMock.Object)
+            {
+                BaseAddress = TestnetUri,
+            };
+
+            var sut = new SolanaRpcClient(TestnetUrl, null, httpClient);
+
+            var result = sut.GetProgramAccounts("4Nd1mBQtrMJVYVfKf2PJy9NZUZdTAsp7D4xWLs4gDB4T", dataSize: 500,
+                memCmpList: new List<MemCmp> { new() { Offset = 25, Bytes = "3Mc6vR" } });
             Assert.AreEqual(requestData, sentMessage);
             Assert.IsNotNull(result.Result);
             Assert.IsTrue(result.WasSuccessful);
