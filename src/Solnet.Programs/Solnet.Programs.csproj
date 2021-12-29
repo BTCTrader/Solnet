@@ -13,7 +13,7 @@
     <PackageLicenseUrl></PackageLicenseUrl>
     <PackageId>BTCTrader.Solnet.Programs</PackageId>
     <Product>BTCTrader.Solnet.Programs</Product>
-    <Version>1.1.0</Version>
+    <Version>1.6.0</Version>
   </PropertyGroup>
 
   <ItemGroup>
