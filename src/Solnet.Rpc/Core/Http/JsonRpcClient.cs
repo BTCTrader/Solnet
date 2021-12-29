@@ -73,16 +73,14 @@ namespace Solnet.Rpc.Core.Http
                 // create byte buffer to avoid charset=utf-8 in content-type header
                 // as this is rejected by some RPC nodes
                 var buffer = Encoding.UTF8.GetBytes(requestJson);
-                using var httpReq = new HttpRequestMessage
+                using var httpReq = new HttpRequestMessage(HttpMethod.Post, (string)null)
                 {
                     Content = new ByteArrayContent(buffer)
                     {
                         Headers = {
                             { "Content-Type", "application/json"}
                         }
-                    },
-                    Method = HttpMethod.Post,
-                    RequestUri = new Uri(NodeAddress.AbsoluteUri, UriKind.Absolute)
+                    }
                 };
 
                 // execute POST
